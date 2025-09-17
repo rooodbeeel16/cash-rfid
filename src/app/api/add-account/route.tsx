@@ -1,53 +1,35 @@
+// /app/api/add-account/route.ts
 import { NextResponse } from 'next/server';
-import formidable from 'formidable';
 import fs from 'fs';
 import path from 'path';
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
-import { Readable } from 'stream';
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-function bufferToStream(buffer: Buffer) {
-  const stream = new Readable();
-  stream.push(buffer);
-  stream.push(null);
-  return stream;
-}
 
 export async function POST(req: Request) {
   try {
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    const formData = await req.formData(); // <-- Web API FormData
+    const username = formData.get('username')?.toString();
+    const password = formData.get('password')?.toString();
+    const rfid = formData.get('rfid')?.toString();
+    const role = formData.get('role')?.toString();
 
-    const form = formidable({
-      uploadDir,
-      keepExtensions: true,
-      multiples: false,
-    });
+    if (!username || !password || !rfid || !role) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-    const buf = Buffer.from(await req.arrayBuffer());
+    let profile_picture: string | null = null;
 
-    const parsed = await new Promise<{ fields: formidable.Fields; files: formidable.Files }>(
-      (resolve, reject) => {
-        form.parse(bufferToStream(buf) as any, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve({ fields, files });
-        });
-      }
-    );
+    const file = formData.get('profile_picture') as File | null;
+    if (file && file.size > 0) {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
 
-    const username = parsed.fields.username as unknown as string;
-    const password = parsed.fields.password as unknown as string;
-    const rfid = parsed.fields.rfid as unknown as string;
-    const role = parsed.fields.role as unknown as string;
-    const profile_picture = parsed.files.profile_picture
-      ? `/uploads/${path.basename((parsed.files.profile_picture as any).filepath)}`
-      : null;
+      const filePath = path.join(uploadsDir, file.name);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      fs.writeFileSync(filePath, buffer);
+
+      profile_picture = `/uploads/${file.name}`;
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 

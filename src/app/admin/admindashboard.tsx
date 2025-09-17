@@ -83,25 +83,60 @@ export default function AdminDashboard({ user }: { user: any }) {
         {/* Modal */}
 {modalOpen && rfidUser && (
   <div
-    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 backdrop-blur-lg transition-opacity"
     role="dialog"
     aria-modal="true"
   >
-    <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
-      <h2 className="text-2xl font-bold text-emerald-700 mb-4">User Details</h2>
-      <p><strong>Username:</strong> {rfidUser.username}</p>
-      <p><strong>Role:</strong> {rfidUser.role}</p>
-      <p><strong>RFID:</strong> {rfidUser.rfid}</p>
-      <p><strong>ID Picture</strong>{rfidUser.picture}</p>
+    <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full relative transform transition-transform scale-95 animate-fadeIn">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6 border-b border-gray-200 pb-3">
+        <h2 className="text-2xl font-extrabold text-emerald-700">User Details</h2>
+        <button
+          onClick={() => setModalOpen(false)}
+          className="text-gray-400 hover:text-gray-600 transition"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* User Info */}
+      <div className="space-y-4">
+        <div className="flex justify-between">
+          <span className="font-semibold text-gray-700">Name:</span>
+          <span className="text-gray-800">{rfidUser.username}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="font-semibold text-gray-700">RFID:</span>
+          <span className="text-gray-800">{rfidUser.rfid}</span>
+        </div>
+
+        <div className="flex flex-col">
+          <span className="font-semibold text-gray-700 mb-1">ID Picture:</span>
+          {rfidUser.profile_picture ? (
+            <img
+              src={rfidUser.profile_picture}
+              alt="User ID"
+              className="w-full h-48 object-cover rounded-xl border border-gray-200 shadow-sm"
+            />
+          ) : (
+            <span className="text-gray-400 italic">No picture available</span>
+          )}
+        </div>
+      </div>
+
+      {/* Close Button */}
       <button
         onClick={() => setModalOpen(false)}
-        className="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-semibold transition"
+        className="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold transition-shadow shadow hover:shadow-lg"
       >
         Close
       </button>
     </div>
   </div>
 )}
+
 
       </section>
     </main>
