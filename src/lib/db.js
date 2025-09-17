@@ -1,8 +1,10 @@
 import mysql from 'mysql2/promise';
 
-export const db = await mysql.createConnection({
+const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '',        // your XAMPP MySQL root password (default is empty)
-  database: 'cashteen__db' // make sure this database exists
+  password: '',
+  database: 'cashteen__db',
 });
+
+export default db;

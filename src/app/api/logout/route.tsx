@@ -1,4 +1,3 @@
-// src/app/api/logout/route.js
 import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
@@ -9,7 +8,7 @@ export async function POST() {
     expires: new Date(0) // expire immediately
   });
 
-  const res = NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'));
+  const res = NextResponse.json({ message: 'Logged out' });
   res.headers.set('Set-Cookie', cookie);
   return res;
 }
