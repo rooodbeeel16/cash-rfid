@@ -133,6 +133,12 @@ className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center
       >
         Close
       </button>
+      <button
+        onClick={() => setModalOpen(false)}
+        className="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold transition-shadow shadow hover:shadow-lg"
+      >
+        Proceed Order
+      </button>
     </div>
   </div>
 )}
